@@ -1,20 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-tulosta_sana.py
-
-Pieni komentorivisovellus, joka lukee tiedoston, jossa tasan yksi sana, 
-ja tulostaa konsoliin.
-
-Käyttö:
-    python tulosta_sana_v4.py --tiedosto sana.txt
-    
-Paluuarvot:
-    0  onnistui
-    1  tiedostoa ei löytynyt tai virhe argumenteissa
-    2  tiedoston sisältö virheellinen
-"""
-
 from __future__ import annotations
 import argparse
 import re
@@ -23,7 +6,6 @@ from pathlib import Path
 
 
 def lue_argumentit() -> argparse.Namespace:
-    """Lukee komentorivin argumentit."""
     parser = argparse.ArgumentParser(
         description="Lue tiedostosta yksi sana ja tulosta se."
     )
@@ -38,12 +20,7 @@ def lue_argumentit() -> argparse.Namespace:
 
 
 def lue_yksi_sana(polku: Path) -> str:
-    """
-    Lukee tiedoston ja tarkistaa, että siinä on vain yksi sana.
 
-    Sallitut merkit: kirjaimet, numerot, alaviiva, väliviiva.
-    Tiedoston lopussa saa olla rivinvaihto.
-    """
     if not polku.exists():
         raise FileNotFoundError(f"Tiedostoa ei löydy: {polku}")
 
@@ -59,7 +36,6 @@ def lue_yksi_sana(polku: Path) -> str:
 
 
 def main() -> int:
-    """Ohjelman päätoiminto."""
     args = lue_argumentit()
     try:
         sana = lue_yksi_sana(args.tiedosto)
