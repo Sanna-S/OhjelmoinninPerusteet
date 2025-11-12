@@ -11,17 +11,8 @@ def hae_varaaja(varaus):
             varaus = f.read().strip()
             varaus = varaus.split('|')
 
-            hae_varausnumero(varaus)
             hae_varaaja(varaus)
-            hae_paiva(varaus)
-            hae_aloitusaika(varaus)
-            hae_tuntimaara(varaus)
-            hae_tuntihinta(varaus)
-            laske_kokonaishinta(varaus)
-            hae_maksettu(varaus)
-            hae_kohde(varaus)
-            hae_puhelin(varaus)
-            hae_sahkoposti(varaus)
+            
 
     if __name__ == "__main__":
         main()
