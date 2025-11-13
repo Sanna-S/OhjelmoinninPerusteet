@@ -13,8 +13,13 @@ def hae_paiva(varaus):
     paiva = datetime.strptime(nimi, "%Y-%m-%d")
     suomalainenPaiva = paiva.strftime("%d.%m.%Y")
     print(f"Päivämäärä: {suomalainenPaiva}")
-    
 
+def hae_aloitusaika(varaus):
+    nimi = varaus[3]
+    aika = datetime.strptime(nimi, "%H:%M")
+    suomalainenAika = aika.strftime("%H.%M")
+    print(f"Aloitusaika: {suomalainenAika}")    
+    
 def hae_tuntimaara(varaus):
     nimi = varaus[4]
     print(f"Tuntimäärä: {nimi}")  
@@ -66,6 +71,7 @@ def main():
     hae_varausnumero(varaus)
     hae_varaaja(varaus)
     hae_paiva(varaus)
+    hae_aloitusaika(varaus)
     hae_tuntimaara(varaus)
     hae_tuntihinta(varaus)
     laske_kokonaishinta(varaus)
