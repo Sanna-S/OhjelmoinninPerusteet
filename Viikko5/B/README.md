@@ -26,8 +26,8 @@
     print(kulutusTuotantoViikko43[0])
     for i ,arvo in enumerate(kulutusTuotantoViikko43[0]):
         print(f"Indeksi {i}: {arvo} -> {type(arvo)}")
-    ```
-    
+```
+
 3. Raportoidaan tiedostoista jotain (konsoli)
 4. Kirjoitetaan tiedostoon jotain 
 5. Kirjoitetaan tiedostoon raportin pohja.
