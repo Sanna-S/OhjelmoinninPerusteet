@@ -89,18 +89,30 @@ def main():
         -Laskee kullekkin päivälle kulutuksen ja tuotannon vaiheittaisen paivantiedot-funktiolla
         -Tulostaa taulukon, joissa näkyy kunkin päivän nimi, päivämäärä, kulutus ja tuotanto vaiheittain
 """
-    tietokanta = lue_data("viikko42.csv")
-    print("\nViikon 42 sähkönkulutus ja -tuotanto (kWh, vaiheittain)", end="\n\n")
-    print("Päivä\t\tPvm\t\tKulutus [kWh]\t\tTuotanto [kWh]")
-    print("\t\t(pv.kk.vvvv)\tv1\tv2\tv3\tv1\tv2\tv3")
-    print("---------------------------------------------------------------------------")
-    print("Maanantai\t" + "\t".join(paivantiedot(date(2025, 10, 13), tietokanta)))
-    print("Tiistai\t\t" + "\t".join(paivantiedot(date(2025, 10, 14), tietokanta)))
-    print("Keskiviikko\t" + "\t".join(paivantiedot(date(2025, 10, 15), tietokanta)))
-    print("Torstai\t\t" + "\t".join(paivantiedot(date(2025, 10, 16), tietokanta)))
-    print("Perjantai\t" + "\t".join(paivantiedot(date(2025, 10, 17), tietokanta)))
-    print("Lauantai\t" + "\t".join(paivantiedot(date(2025, 10, 18), tietokanta)))
-    print("Sunnuntai\t" + "\t".join(paivantiedot(date(2025, 10, 19), tietokanta)))
+    kulutusTuotantoViikko41 = lue_data("viikko41.csv")
+    kulutusTuotantoViikko42 = lue_data("viikko42.csv")
+    kulutusTuotantoViikko43 = lue_data("viikko43.csv")
+    print("Viikko41")
+    print("-----------")
+    print(kulutusTuotantoViikko41[0])
+    for i ,arvo in enumerate(kulutusTuotantoViikko41[0]):
+        print(f"Indeksi {i}: {arvo} -> {type(arvo)}")
+    print("Viikko42")
+    print("-----------")
+    print(kulutusTuotantoViikko42[0])
+    for i ,arvo in enumerate(kulutusTuotantoViikko42[0]):
+        print(f"Indeksi {i}: {arvo} -> {type(arvo)}")
+    print("Viikko43")
+    print("-----------")
+    print(kulutusTuotantoViikko43[0])
+    for i ,arvo in enumerate(kulutusTuotantoViikko43[0]):
+        print(f"Indeksi {i}: {arvo} -> {type(arvo)}")
+    #print("\nViikon 42 sähkönkulutus ja -tuotanto (kWh, vaiheittain)", end="\n\n")
+    #print("Päivä\t\tPvm\t\tKulutus [kWh]\t\tTuotanto [kWh]")
+    #print("\t\t(pv.kk.vvvv)\tv1\tv2\tv3\tv1\tv2\tv3")
+    #print("---------------------------------------------------------------------------")
+    #print("Maanantai\t" + "\t".join(paivantiedot(date(2025, 10, 13), tietokanta)))
+    
 
     
         
