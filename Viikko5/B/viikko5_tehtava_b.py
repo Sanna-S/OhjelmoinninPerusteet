@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Sanna Sjöblad
 # Licence: MIT
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 def muunna_tiedot(tietue: list) -> list:
     """
@@ -12,16 +12,15 @@ def muunna_tiedot(tietue: list) -> list:
         
     Palauttaa: Listan, jossa on muutetut tietotyypit.
     """
-    muutettu__tietorivi = []
-    muutettu__tietorivi.append(datetime.fromisoformat(tietue[0]))  
-    muutettu__tietorivi.append(int(tietue[1])) 
-    muutettu__tietorivi.append(int(tietue[2]))  
-    muutettu__tietorivi.append(int(tietue[3]))  
-    muutettu__tietorivi.append(int(tietue[4]))
-    muutettu__tietorivi.append(int(tietue[5]))
-    muutettu__tietorivi.append(int(tietue[6]))
-    return muutettu__tietorivi
-
+    return [
+        datetime.fromisoformat(tietue[0]),
+        int(tietue[1]),
+        int(tietue[2]),
+        int(tietue[3]),
+        int(tietue[4]),
+        int(tietue[5]),
+        int(tietue[6]),
+    ]
 
 def lue_data(tiedoston_nimi: str) -> list:
     """
@@ -41,6 +40,7 @@ def lue_data(tiedoston_nimi: str) -> list:
             tietue = tietue.strip()
             tietueSarakkeet = tietue.split(";")
             tietokanta.append(muunna_tiedot(tietueSarakkeet))
+
     return tietokanta
 
 
@@ -56,29 +56,42 @@ def paivantiedot(paiva: date, tietokanta: list) -> list:
 
     Palauttaa: Lista, jossa on pvm-merkkijono ja kuusi kulutus- ja tuotantolukemaa merkkijonoina.
     """
-    kulutus1 = kulutus2 = kulutus3 = 0
-    tuotanto1 = tuotanto2 = tuotanto3 = 0
+    kulutus = [0, 0, 0]
+    tuotanto = [0, 0, 0]
+    for tietue in tietokanta:
+        if tietue[0].date() == paiva:
+            kulutus[0] += tietue[1] / 1000
+            kulutus[1] += tietue[2] / 1000
+            kulutus[2] += tietue[3] / 1000
+            tuotanto[0] += tietue[4] / 1000
+            tuotanto[1] += tietue[5] / 1000
+            tuotanto[2] += tietue[6] / 1000
 
-    for lukema in tietokanta:
-        if lukema[0].date() == paiva:
-            kulutus1 += lukema[1] / 1000  # Muutetaan kWh:ksi
-            kulutus2 += lukema[2] / 1000
-            kulutus3 += lukema[3] / 1000
-            tuotanto1 += lukema[4] / 1000
-            tuotanto2 += lukema[5] / 1000
-            tuotanto3 += lukema[6] / 1000
-
-    pvm_str = f"{paiva.day:02d}.{paiva.month:02d}.{paiva.year}"
-    
     return [
-        pvm_str,
-        f"{kulutus1:.2f}".replace(".", ","),
-        f"{kulutus2:.2f}".replace(".", ","),
-        f"{kulutus3:.2f}".replace(".", ","),
-        f"{tuotanto1:.2f}".replace(".", ","),
-        f"{tuotanto2:.2f}".replace(".", ","),
-        f"{tuotanto3:.2f}".replace(".", ","),
+        f"{paiva.day}.{paiva.month}.{paiva.year}",
+        f"{kulutus[0]:.2f}".replace(".", ","),
+        f"{kulutus[1]:.2f}".replace(".", ","),
+        f"{kulutus[2]:.2f}".replace(".", ","),
+        f"{tuotanto[0]:.2f}".replace(".", ","),
+        f"{tuotanto[1]:.2f}".replace(".", ","),
+        f"{tuotanto[2]:.2f}".replace(".", ","),
     ]
+
+def laske_yhteenvedot(tietokanta: list) -> tuple:
+    """
+    Laskee koko viikon kulutuksen ja tuotannon yhteen.
+
+    Parametrit:
+        tietokanta (list): kaikki viikon rivit, joissa on päivämäärä, kulutus ja tuotanto
+
+    Palauttaa: Tuple, jossa on viikon kokonaiskulutus ja -tuotanto kWh:na.
+    """
+    kulutus = tuotanto = 0.0
+    for tietue in tietokanta:
+        kulutus += (tietue[1] + tietue[2] + tietue[3]) / 1000
+        tuotanto += (tietue[4] + tietue[5] + tietue[6]) / 1000
+
+    return kulutus, tuotanto
 
 def main():
     """
@@ -94,29 +107,68 @@ def main():
     kulutusTuotantoViikko43 = lue_data("viikko43.csv")
     # Viikko 41
     viikko41 = "\nViikon 41 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n\n"
-    viikko41 += "Päivä\t\tPvm\t\t\t\tKulutus [kWh]\t\t\tTuotanto [kWh]\n"
-    viikko41 += "\t\t\t(pv.kk.vv)\t\tv1\t\tv2\t\tv3\t\tv1\t\tv2\t\tv3\n"
-    viikko41 += "----------------------------------------------------------------------------\n"
-    viikko41 += "Maanantai\t" + "\t".join(paivantiedot(date(2025, 10, 6), kulutusTuotantoViikko41)) + "\n"
-    viikko41 += "---------------------------------------------------------------------------\n"
+    viikko41 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
+    viikko41 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
+    viikko41 += "-" * 101 + "\n" # luo merkkijonon, jossa on 101 viivaa. Tulostaa vaakaviivan taulukkoon
+    viikko41 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 6), kulutusTuotantoViikko41)) + "\n"
+    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 7)  # Tiistai
+
+    for i, nimi in enumerate(viikonpaivat):
+        paiva = alku + timedelta(days=i)
+        tiedot = paivantiedot(paiva, kulutusTuotantoViikko41)
+        # Tasataan viikonpäivän nimi 11 merkkiin, jotta päivämäärä alkaa samasta kohdasta
+        viikko41 += f"{nimi:<20}" + "\t\t".join(tiedot) + "\n"
+    viikko41 += "-" * 101 + "\n"
+
     # Viikko 42
     viikko42 = "\nViikon 42 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n\n"
-    viikko42 += "Päivä\t\tPvm\t\t\t\tKulutus [kWh]\t\t\tTuotanto [kWh]\n"
-    viikko42 += "\t\t\t(pv.kk.vv)\tv1\tv2\tv3\tv1\t\tv2\t\tv3\n"
-    viikko42 += "----------------------------------------------------------------------------\n"
-    viikko42 += "Maanantai\t" + "\t".join(paivantiedot(date(2025, 10, 13), kulutusTuotantoViikko42)) + "\n"
-    viikko42 += "---------------------------------------------------------------------------\n"
+    viikko42 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
+    viikko42 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
+    viikko42 += "-" * 101 + "\n"
+    viikko42 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 13), kulutusTuotantoViikko42)) + "\n"
+    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 14)
+    
+    for i, nimi in enumerate(viikonpaivat):
+        paiva = alku + timedelta(days=i)
+        tiedot = paivantiedot(paiva, kulutusTuotantoViikko42)
+        viikko42 += f"{nimi:<20}" + "\t\t".join(tiedot) + "\n"
+    viikko42 += "-" * 101 + "\n"
+
    # Viikko 43
     viikko43 = "\nViikon 43 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n\n"
-    viikko43 += "Päivä\t\tPvm\t\t\t\tKulutus [kWh]\t\t\tTuotanto [kWh]\n"
-    viikko43 += "\t\t\t(pv.kk.vv)\tv1\tv2\tv3\tv1\t\tv2\t\tv3\n"
-    viikko43 += "----------------------------------------------------------------------------\n"
-    viikko43 += "Maanantai\t" + "\t".join(paivantiedot(date(2025, 10, 20), kulutusTuotantoViikko43)) + "\n"
-    viikko43 += "---------------------------------------------------------------------------\n"
+    viikko43 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
+    viikko43 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
+    viikko43 += "-" * 101 + "\n"
+    viikko43 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 20), kulutusTuotantoViikko43)) + "\n"
+    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 21)
+
+    for i, nimi in enumerate(viikonpaivat):
+        paiva = alku + timedelta(days=i)
+        tiedot = paivantiedot(paiva, kulutusTuotantoViikko43)
+        viikko43 += f"{nimi:<20}" + "\t\t".join(tiedot) + "\n"
+    viikko43 += "-" * 101 + "\n"
+
+    # Lasketaan yhteenvedot tiedostoon
+
+    kulutus41, tuotanto41 = laske_yhteenvedot(kulutusTuotantoViikko41)
+    kulutus42, tuotanto42 = laske_yhteenvedot(kulutusTuotantoViikko42)
+    kulutus43, tuotanto43 = laske_yhteenvedot(kulutusTuotantoViikko43)
+
+    Yhteenveto = "\nViikkojen yhteenveto (kWh):\n"
+    Yhteenveto += "-" * 30 + "\n"
+    Yhteenveto += f"Viikko 41 - Kulutus: {kulutus41:.2f} kWh, Tuotanto: {tuotanto41:.2f} kWh\n"
+    Yhteenveto += f"Viikko 42 - Kulutus: {kulutus42:.2f} kWh, Tuotanto: {tuotanto42:.2f} kWh\n"
+    Yhteenveto += f"Viikko 43 - Kulutus: {kulutus43:.2f} kWh, Tuotanto: {tuotanto43:.2f} kWh\n"
+
     # Kirjoitetaan jotain tiedostoon
     with open("yhteenveto.txt", "w", encoding="utf-8") as f:
-        f.write(viikko41+viikko42+viikko43)
-        
+        f.write(viikko41)
+        f.write(viikko42)
+        f.write(viikko43)
+        f.write(Yhteenveto) 
 
     print("Raportti luotu")
     
