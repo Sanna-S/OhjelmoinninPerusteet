@@ -25,14 +25,15 @@ def muunna_tiedot(tietue: list) -> list:
 def lue_data(tiedoston_nimi: str) -> list:
     """
     Lukee CSV-tiedoston ja palauttaa rivit sopivassa rakenteessa ja tietotyypissä.
-        -avaa tiedoston, jossa on sarakkeet eroteltu puolipisteillä
-        -ohittaa ensimmäisen rivin (sarakkeiden esittelyrivin)
-        -muuntaa jokaisen rivin tietotyypit oikeiksi kutsumalla muunna_tiedot-funktiota
+        -Kutsuu muunna_tiedot-funktiota muuntaakseen jokaisen rivin tietotyypit sopiviksi.
+        -Ohittaa ensimmäisen rivin, joka sisältää sarakkeiden esittelytiedot.
 
     Parametrit:
-        tiedoston_nimi (str): Luettavan tiedoston nimi
-    
-    Palauttaa: Lista, jossa on jokainen tietue listana sopivilla tietotyypeillä."""
+        tiedoston_nimi (str): Luettavan tiedoston nimi, ottaa vastaan tiedoston jossa kentät on erotettu puolipisteellä
+
+    Palauttaa: 
+        list: Lista, jossa on jokainen rivion muunnettu oikeaan tietotyyppiin.
+    """
     tietokanta = []
     with open(tiedoston_nimi, "r", encoding="utf-8") as f:
         next(f)  # Ohitetaan sarakkaiden esittelyrivi pois
@@ -46,7 +47,7 @@ def lue_data(tiedoston_nimi: str) -> list:
 
 def paivantiedot(paiva: date, tietokanta: list) -> list:
     """
-    Laskee annetun päivän kulutukset ja tuotannot vaiheittain yhteen.
+    Laskee annetun päivän kulutukset ja tuotannot vaiheittain.
     Laskee kulutuksen ja tuotannon kolmessa vaiheessa erikseen ja muuntaa ne kWh:ksi jakamalla luvut tuhannella.
     Muotoilee pvm-merkkijonon muodossa "pp.kk.vvvv" ja desimaalierottimen pilkuksi.
 
@@ -96,11 +97,14 @@ def laske_yhteenvedot(tietokanta: list) -> tuple:
 def main():
     """
     Ohjelman pääfunktio: lukee datan, laskee yhteenvedot ja tulostaa raportin.
-        -Lukee CSV-tiedoston lue_data-funktiolla
+        -Lukee viikkojen 41-43 CSV-tiedostot lue_data-funktiolla
         -Tulostaa otsikon ja taulukon sarakkeet
-        -Tulostaa jokaisen viikonpäivän erikseen
+        -Tulostaa ensimmäisen maanantain tiedot erikseen
+        -Käyttää silmukkaa ensimmäisen viikon tiistaista sunnuntaihin sekä viikkojen 42 ja 43 kaikkiin päiviin
         -Laskee kullekkin päivälle kulutuksen ja tuotannon vaiheittaisen paivantiedot-funktiolla
         -Tulostaa taulukon, joissa näkyy kunkin päivän nimi, päivämäärä, kulutus ja tuotanto vaiheittain
+        -Laskee viikon yhteenvedot laske_yhteenvedot-funktiolla
+        -Kirjoittaa raportin tiedostoon "yhteenveto.txt"
 """
     kulutusTuotantoViikko41 = lue_data("viikko41.csv")
     kulutusTuotantoViikko42 = lue_data("viikko42.csv")
@@ -117,7 +121,7 @@ def main():
     for i, nimi in enumerate(viikonpaivat):
         paiva = alku + timedelta(days=i)
         tiedot = paivantiedot(paiva, kulutusTuotantoViikko41)
-        # Tasataan viikonpäivän nimi 11 merkkiin, jotta päivämäärä alkaa samasta kohdasta
+        # Tasataan viikonpäivän nimi 20 merkin levyiseksi, jotta taulukko pysyy siistinä
         viikko41 += f"{nimi:<20}" + "\t\t".join(tiedot) + "\n"
     viikko41 += "-" * 101 + "\n"
 
@@ -126,9 +130,8 @@ def main():
     viikko42 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
     viikko42 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
     viikko42 += "-" * 101 + "\n"
-    viikko42 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 13), kulutusTuotantoViikko42)) + "\n"
-    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
-    alku = date(2025, 10, 14)
+    viikonpaivat = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 13)
     
     for i, nimi in enumerate(viikonpaivat):
         paiva = alku + timedelta(days=i)
@@ -141,9 +144,8 @@ def main():
     viikko43 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
     viikko43 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
     viikko43 += "-" * 101 + "\n"
-    viikko43 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 20), kulutusTuotantoViikko43)) + "\n"
-    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
-    alku = date(2025, 10, 21)
+    viikonpaivat = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 20)
 
     for i, nimi in enumerate(viikonpaivat):
         paiva = alku + timedelta(days=i)
