@@ -78,21 +78,22 @@ def paivantiedot(paiva: date, tietokanta: list) -> list:
         f"{tuotanto[2]:.2f}".replace(".", ","),
     ]
 
-def laske_yhteenvedot(tietokanta: list) -> tuple:
+def laske_yhteenvedot(tietokanta: list) -> list:
     """
     Laskee koko viikon kulutuksen ja tuotannon yhteen.
 
     Parametrit:
         tietokanta (list): kaikki viikon rivit, joissa on päivämäärä, kulutus ja tuotanto
 
-    Palauttaa: Tuple, jossa on viikon kokonaiskulutus ja -tuotanto kWh:na.
+    Palauttaa: 
+        Lista, jossa on viikon kokonaiskulutus ja -tuotanto kWh:na.
     """
     kulutus = tuotanto = 0.0
     for tietue in tietokanta:
         kulutus += (tietue[1] + tietue[2] + tietue[3]) / 1000
         tuotanto += (tietue[4] + tietue[5] + tietue[6]) / 1000
 
-    return kulutus, tuotanto
+    return [kulutus, tuotanto]
 
 def main():
     """
