@@ -160,11 +160,12 @@ def main():
     kulutus43, tuotanto43 = laske_yhteenvedot(kulutusTuotantoViikko43)
 
     Yhteenveto = "\nViikkojen yhteenveto (kWh):\n"
-    Yhteenveto += "-" * 30 + "\n"
+    Yhteenveto += "-" * 53 + "\n"
     Yhteenveto += f"Viikko 41 - Kulutus: {kulutus41:.2f} kWh, Tuotanto: {tuotanto41:.2f} kWh\n"
     Yhteenveto += f"Viikko 42 - Kulutus: {kulutus42:.2f} kWh, Tuotanto: {tuotanto42:.2f} kWh\n"
     Yhteenveto += f"Viikko 43 - Kulutus: {kulutus43:.2f} kWh, Tuotanto: {tuotanto43:.2f} kWh\n"
-
+    Yhteenveto += "-" * 53 + "\n"
+    
     # Kirjoitetaan jotain tiedostoon
     with open("yhteenveto.txt", "w", encoding="utf-8") as f:
         f.write(viikko41)
