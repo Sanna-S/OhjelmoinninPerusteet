@@ -83,9 +83,8 @@
     viikko42 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
     viikko42 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
     viikko42 += "-" * 101 + "\n"
-    viikko42 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 13), kulutusTuotantoViikko42)) + "\n"
-    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
-    alku = date(2025, 10, 14)
+    viikonpaivat = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 13)
     
     for i, nimi in enumerate(viikonpaivat):
         paiva = alku + timedelta(days=i)
@@ -98,9 +97,8 @@
     viikko43 += "Päivä\t\t\t\tPvm\t\t\t\tKulutus [kWh]\t\t\t\t\t\tTuotanto [kWh]\n"
     viikko43 += "\t\t\t\t\t(pv.kk.vv)\t\tv1\t\t\tv2\t\t\tv3\t\t\tv1\t\t\tv2\t\t\tv3\n"
     viikko43 += "-" * 101 + "\n"
-    viikko43 += "Maanantai\t\t\t" + "\t\t".join(paivantiedot(date(2025, 10, 20), kulutusTuotantoViikko43)) + "\n"
-    viikonpaivat = ["Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
-    alku = date(2025, 10, 21)
+    viikonpaivat = ["Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai", "Sunnuntai"]
+    alku = date(2025, 10, 20)
 
     for i, nimi in enumerate(viikonpaivat):
         paiva = alku + timedelta(days=i)
