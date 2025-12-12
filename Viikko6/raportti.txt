@@ -1,0 +1,6 @@
+--------------------------------------------------
+Raportti kuukaudelta: Marraskuu
+-Kokonaiskulutus: 1173.40 kWh
+-Kokonaistuotanto: 0.00 kWh
+-Keskilämpötila: 0.13 °C
+--------------------------------------------------
