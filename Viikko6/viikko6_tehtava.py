@@ -21,7 +21,18 @@ def muunna_tiedot(tietue: list) -> list:
     ]
     
 def lue_date(tiedoston_nimi: str) -> list:
+    """
+    Lukee CSV-tiedoston ja palauttaa rivit oikeassa rakenteessa ja tietotyypeissä.
+    Kutsuu apufunktiota muunna_tiedot muuttaakseen tietotyypit.
+     funktio palauttaa listan, jolloin tietotyypit on muutettu oikeiksi.
 
+    Parametrit:
+    tiedoston_nimi (str): ottaa vastaan tiedoston jossa kentät eroteltu puolipisteillä.
+
+    Palauttaa:
+    tietokanta (list): palauttaa tietokannan, jossa tietotyypit on muutettu.   
+    """
+    
     tietokanta = []
     with open(tiedoston_nimi, "r", encoding="utf-8") as f:
         next(f)  # ohitetaan kenttien esittelytiedot
@@ -32,14 +43,27 @@ def lue_date(tiedoston_nimi: str) -> list:
     return tietokanta
 
 def raportti_tiedostoon(raportti: str,):
+    """
+    Kirjoittaa raportin tiedostoon raportti.txt.
+    Parametrit:
+    raportti (str): raporttiteksti
+"""
     with open("raportti.txt", "w", encoding="utf-8") as f:
         f.write(raportti)
 
 def raportti_aikavali(
         alku: datetime.date, loppu: datetime.date, tietokanta: list) -> str:
-
-    raportti = "-" * 50 + "\n"
-    raportti += f"Raportti väliltä {alku.day} - {alku.month}.{alku.year}-"
+    """
+    Raportiin tulostetaan aikaväliltä:
+    - Alkupäivämäärä ja loppupäivämäärä (pp.kk.vvvv-pp.kk.vvvv)
+    - Aikavälin kokonaiskulutuksen (kWh, 2 desimaalin tarkkuudella, pilkku desimaalierottimena)
+    - Aikavälin kokonaistuotannon (kWh, 2 desimaalin tarkkuudella, pilkku desimaalierottimena)
+    - Aikavälin keskilämpötila (°C, esim. kaikkien tuntien lämpötilojen keskiarvo)
+    Parametrit:
+    raportti (str): raporttiteksti
+    """
+    raportti = "=" * 50 + "\n"
+    raportti += f"Raportti väliltä {alku.day}.{alku.month}.{alku.year}-"
     raportti += f"{loppu.day}.{loppu.month}.{loppu.year}\n"
     kulutus = 0
     tuotanto = 0
@@ -51,16 +75,26 @@ def raportti_aikavali(
             tuotanto += paiva[2]
             lampotila += paiva[3]
     
-    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(",", ".") + " kWh\n"
-    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(",", ".") + " kWh\n"
-    raportti += "-Keskilämpötila: " + f"{(lampotila / ((loppu - alku).days*24)):.2f}".replace(",", ".") + " °C\n"
-    raportti += "-" * 50 + "\n"
+    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Keskilämpötila: " + f"{(lampotila / ((loppu - alku).days*24)):.2f}".replace(".", ",") + " °C\n"
+    raportti += "=" * 50 + "\n"
     return raportti
 
 def raportti_kk(kuukausi: int, tietokanta: list) -> str:
+    """
+    Raporttiin tulostetaan:
+    - Kuukausi 
+    - Kuukauden kokonaiskulutus (kWh, 2 desimaalin tarkkuudella, pilkku desimaalierottimena)
+    - Kuukauden kokonaistuotanto (kWh, 2 desimaalin tarkkuudella, pilkku desimaalierottimena)
+    - Kuukauden keskimääräinen vuorokauden lämpötila
+
+    Parametrit:
+    raportti (str): raporttiteksti
+    """
 
     kuukaudet = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu","Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"]
-    raportti = "-" * 50 + "\n"
+    raportti = "=" * 50 + "\n"
     raportti += f"Raportti kuukaudelta: {kuukaudet[kuukausi-1]}\n"
     kulutus = 0
     tuotanto = 0    
@@ -74,15 +108,25 @@ def raportti_kk(kuukausi: int, tietokanta: list) -> str:
             lampotila += paiva[3]
             paivien_maara += 1
 
-    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(",", ".") + " kWh\n"
-    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(",", ".") + " kWh\n"
-    raportti += "-Keskilämpötila: " + f"{(lampotila / (paivien_maara*24)):.2f}".replace(",", ".") + " °C\n"
-    raportti += "-" * 50 + "\n"
+    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Keskilämpötila: " + f"{(lampotila / (paivien_maara*24)):.2f}".replace(".", ",") + " °C\n"
+    raportti += "=" * 50 + "\n"
     return raportti
 
 def raportti_vuosi(tietokanta: list) -> str:
+    """
+    Raporttiin tulostetaan:
+    - Kuukausi
+    - Kuukauden kokonaiskulutus (kWh, 2 desimaalin tarkkuudella, pilkku desimaalierottimena)
+    - Kuukauden kokonaistuotanto (kWh, 2 desimaalin tarkkuudella, pilkku desimaalierottimena)
+    - Kuukauden keskimääräinen vuorokauden lämpötila
 
-    raportti = "-" * 50 + "\n"
+    Parametrit:
+    raportti (str): raporttiteksti
+    """
+
+    raportti = "=" * 50 + "\n"
     raportti += f"Raportti vuodelta: {tietokanta[0][0].date().year}\n"
     kulutus = 0 
     tuotanto = 0        
@@ -95,21 +139,31 @@ def raportti_vuosi(tietokanta: list) -> str:
         lampotila += paiva[3]
         paivien_maara += 1
 
-    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(",", ".") + " kWh\n"
-    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(",", ".") + " kWh\n"
-    raportti += "-Keskilämpötila: " + f"{(lampotila / (paivien_maara*24)):.2f}".replace(",", ".") + " °C\n"
-    raportti += "-" * 50 + "\n"
+    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Keskilämpötila: " + f"{(lampotila / (paivien_maara*24)):.2f}".replace(".", ",") + " °C\n"
+    raportti += "=" * 50 + "\n"
     return raportti
 
 def valikot (paavalikko: bool, alavalikko: bool) -> list:
+    """
+    Luo valikot ja palauttaa valinnat listana.
+
+    Parametrit:
+    paavalikko (bool): käynnistetään päävalikko
+    alavalikko (bool): käynnistetään alavalikko
+
+    Palauttaa:
+    valikon_valinnat (str): valikon valinnat yhdistettynä arvoihin
+    """
     while True and paavalikko:
-        print("-" * 50)
+        print("=" * 50)
         print("Valitse raporttityyppi:")
         print("1) Päiväkohtainen yhteenveto aikaväliltä")
         print("2) Kuukausikohtainen yhteenveto yhdelle kuukaudelle")
         print("3) Vuoden 2025 kokonaisyhteenveto")
         print("4) Lopeta ohjelma")
-        print("-" * 50)
+        print("=" * 50)
         try:
             valinta = int(input("Anna valinta (numero 1-4):"))
             if not 1 <= valinta <= 4:
@@ -147,12 +201,12 @@ def valikot (paavalikko: bool, alavalikko: bool) -> list:
             continue
 
     while True and alavalikko:
-        print("-" * 50)
+        print("=" * 50)
         print("Mitä haluat tehdä seuraavaksi?")
         print("1) Kirjoita raportti tiedostoon raportti.txt")
         print("2) Luo uusi raportti")
         print("3) Lopeta")
-        print("-" * 50)
+        print("=" * 50)
         try:
             valinta = int(input("Anna valinta (numero 1-3):"))
             if not 1 <= valinta <= 3:
@@ -168,6 +222,9 @@ def valikot (paavalikko: bool, alavalikko: bool) -> list:
     
 
 def main():
+    """
+    Ohjelman pääfunktio: kysyy käyttäjältä inputteja ja tulostaa/vie tiedostoon raportteja
+    """
     
     kulutus_Tuotanto2025 = lue_date("2025.csv")
 
