@@ -1,4 +1,4 @@
-# Tehtävän pipeline
+# Tehtävän 6 eka pipeline
 
 1. Rakennetaan päävalikko
 2. Rakennetaan alavalikot

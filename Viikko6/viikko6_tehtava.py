@@ -51,8 +51,19 @@ def raportti_tiedostoon(raportti: str,):
     with open("raportti.txt", "w", encoding="utf-8") as f:
         f.write(raportti)
 
-def raportti_aikavali(
-        alku: datetime.date, loppu: datetime.date, tietokanta: list) -> str:
+def muotoile_raportti(otsikko: str, kulutus: float, tuotanto: float, lampotila: float, tietue_lkm: int) -> str:
+    """"
+    Muotoilee raportin annetulla otsikolla ja arvoilla.
+    """
+    raportti = "-" * 50 + "\n"
+    raportti += f"{otsikko}\n"
+    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
+    raportti += "-Keskilämpötila: " + f"{lampotila/tietue_lkm:.2f}".replace(".", ",") + " °C\n"
+    raportti += "-" * 50 + "\n"
+    return raportti
+
+def raportti_aikavali(alkupaiva: datetime.date, loppupaiva: datetime.date, tietokanta: list) -> str:
     """
     Raportiin tulostetaan aikaväliltä:
     - Alkupäivämäärä ja loppupäivämäärä (pp.kk.vvvv-pp.kk.vvvv)
@@ -62,24 +73,20 @@ def raportti_aikavali(
     Parametrit:
     raportti (str): raporttiteksti
     """
-    raportti = "=" * 50 + "\n"
-    raportti += f"Raportti väliltä {alku.day}.{alku.month}.{alku.year}-"
-    raportti += f"{loppu.day}.{loppu.month}.{loppu.year}\n"
     kulutus = 0
     tuotanto = 0
-    lampotila = 0   
+    lampotila = 0 
+    tietue_lkm = 0 
 
-    for paiva in tietokanta:
-        if alku <= paiva[0].date() <= loppu:
-            kulutus += paiva[1]
-            tuotanto += paiva[2]
-            lampotila += paiva[3]
+    for tietue in tietokanta:
+        if alkupaiva <= tietue[0].date() <= loppupaiva:
+            kulutus += tietue[1]
+            tuotanto += tietue[2]
+            lampotila += tietue[3]
+            tietue_lkm += 1
     
-    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
-    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
-    raportti += "-Keskilämpötila: " + f"{(lampotila / ((loppu - alku).days*24)):.2f}".replace(".", ",") + " °C\n"
-    raportti += "=" * 50 + "\n"
-    return raportti
+    otsikko = f"Raportti aikaväliltä: {alkupaiva}-{loppupaiva}"
+    return muotoile_raportti(otsikko, kulutus, tuotanto, lampotila, tietue_lkm)
 
 def raportti_kk(kuukausi: int, tietokanta: list) -> str:
     """
@@ -92,27 +99,22 @@ def raportti_kk(kuukausi: int, tietokanta: list) -> str:
     Parametrit:
     raportti (str): raporttiteksti
     """
-
     kuukaudet = ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu","Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"]
-    raportti = "=" * 50 + "\n"
-    raportti += f"Raportti kuukaudelta: {kuukaudet[kuukausi-1]}\n"
+    
     kulutus = 0
     tuotanto = 0    
     lampotila = 0
-    paivien_maara = 0
+    tietue_lkm = 0
 
-    for paiva in tietokanta:
-        if paiva[0].date().month == kuukausi:
-            kulutus += paiva[1]
-            tuotanto += paiva[2]
-            lampotila += paiva[3]
-            paivien_maara += 1
+    for tietue in tietokanta:
+        if tietue[0].date().month == kuukausi:
+            kulutus += tietue[1]
+            tuotanto += tietue[2]
+            lampotila += tietue[3]
+            tietue_lkm += 1
 
-    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
-    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
-    raportti += "-Keskilämpötila: " + f"{(lampotila / (paivien_maara*24)):.2f}".replace(".", ",") + " °C\n"
-    raportti += "=" * 50 + "\n"
-    return raportti
+    otsikko = f"Raportti kuukaudelta: {kuukaudet[kuukausi - 1]}\n"
+    return muotoile_raportti(otsikko, kulutus, tuotanto, lampotila, tietue_lkm)
 
 def raportti_vuosi(tietokanta: list) -> str:
     """
@@ -125,25 +127,20 @@ def raportti_vuosi(tietokanta: list) -> str:
     Parametrit:
     raportti (str): raporttiteksti
     """
-
-    raportti = "=" * 50 + "\n"
-    raportti += f"Raportti vuodelta: {tietokanta[0][0].date().year}\n"
     kulutus = 0 
     tuotanto = 0        
     lampotila = 0
-    paivien_maara = 0
+    tietue_lkm = 0
 
-    for paiva in tietokanta:
-        kulutus += paiva[1]
-        tuotanto += paiva[2]
-        lampotila += paiva[3]
-        paivien_maara += 1
+    for tietue in tietokanta:
+        kulutus += tietue[1]
+        tuotanto += tietue[2]
+        lampotila += tietue[3]
+        tietue_lkm += 1
+        
 
-    raportti += "-Kokonaiskulutus: " + f"{kulutus:.2f}".replace(".", ",") + " kWh\n"
-    raportti += "-Kokonaistuotanto: " + f"{tuotanto:.2f}".replace(".", ",") + " kWh\n"
-    raportti += "-Keskilämpötila: " + f"{(lampotila / (paivien_maara*24)):.2f}".replace(".", ",") + " °C\n"
-    raportti += "=" * 50 + "\n"
-    return raportti
+    otsikko = f"Raportti vuodelta 2025\n"
+    return muotoile_raportti(otsikko, kulutus, tuotanto, lampotila, tietue_lkm)
 
 def valikot (paavalikko: bool, alavalikko: bool) -> list:
     """
@@ -157,19 +154,19 @@ def valikot (paavalikko: bool, alavalikko: bool) -> list:
     valikon_valinnat (str): valikon valinnat yhdistettynä arvoihin
     """
     while True and paavalikko:
-        print("=" * 50)
+        print("-" * 50)
         print("Valitse raporttityyppi:")
         print("1) Päiväkohtainen yhteenveto aikaväliltä")
         print("2) Kuukausikohtainen yhteenveto yhdelle kuukaudelle")
         print("3) Vuoden 2025 kokonaisyhteenveto")
         print("4) Lopeta ohjelma")
-        print("=" * 50)
+        print("-" * 50)
         try:
             valinta = int(input("Anna valinta (numero 1-4):"))
             if not 1 <= valinta <= 4:
                 raise ValueError
         except:
-            print("Virheellinen valinta. Anna numero välillä 1-4.")
+            print("Valintasi on virheellinen. Anna numero välillä 1-4.")
             continue
 
         if valinta == 1:
@@ -179,7 +176,7 @@ def valikot (paavalikko: bool, alavalikko: bool) -> list:
                 valinnat = [0, 1, date(int(alku_pvm[2]), int(alku_pvm[1]), int(alku_pvm[0])), date(int(loppu_pvm[2]), int(loppu_pvm[1]), int(loppu_pvm[0]))]
                 break
             except:
-                print("Virheellinen päivämäärä. Anna päivämäärä muodossa pp.kk.vvvv. Palataan alkuun.")
+                print("Päivämäärä on väärässä muodossa. Anna päivämäärä muodossa pp.kk.vvvv. Palataan alkuun.")
                 continue
 
         elif valinta == 2:
@@ -188,7 +185,7 @@ def valikot (paavalikko: bool, alavalikko: bool) -> list:
                 valinnat = [0, 2, kuukausi]
                 break
             except:
-                print("Virheellinen kuukausi. Anna kuukausi numerona välillä 1-12. Palataan alkuun.")
+                print("Virheellinen valinta. Kuukausi pitää antaa numerona välillä 1-12. Palataan alkuun.")
                 continue
 
         elif valinta == 3:
@@ -201,18 +198,18 @@ def valikot (paavalikko: bool, alavalikko: bool) -> list:
             continue
 
     while True and alavalikko:
-        print("=" * 50)
+        print("-" * 50)
         print("Mitä haluat tehdä seuraavaksi?")
         print("1) Kirjoita raportti tiedostoon raportti.txt")
         print("2) Luo uusi raportti")
         print("3) Lopeta")
-        print("=" * 50)
+        print("-" * 50)
         try:
             valinta = int(input("Anna valinta (numero 1-3):"))
             if not 1 <= valinta <= 3:
                 raise ValueError
         except: 
-            print("Virheellinen valinta. Anna numero välillä 1-3.")
+            print("Valintasi on virheellinen. Anna numero välillä 1-3.")
             continue
         valinnat = [1, valinta]
         break
@@ -250,5 +247,6 @@ def main():
             continue
         elif alavalikko[1] == 3:
             break
+
 if __name__ == "__main__":
     main()
