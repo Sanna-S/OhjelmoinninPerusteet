@@ -21,7 +21,6 @@ def muunna_varaustiedot(varaus_lista: list[str]) -> dict:
 
 def hae_varaukset(varaustiedosto: str) -> list[dict]:
     varaukset = []
-    varaukset.append(["Id", "Nimi", "Sahköposti", "Puhelin", "Paiva", "Kellonaika", "Kesto", "Hinta", "Vahvistettu", "Tila", "Luotu"])
     with open(varaustiedosto, "r", encoding="utf-8") as f:
         for varaus in f:
             varaus = varaus.strip()
