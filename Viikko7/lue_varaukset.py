@@ -28,22 +28,22 @@ def hae_varaukset(varaustiedosto: str) -> list[dict]:
             varaukset.append(muunna_varaustiedot(varaustiedot))
     return varaukset
 
-def vahvistetut_varaukset(varaukset: list):
-    for varaus in varaukset[1:]:
+def vahvistetut_varaukset(varaukset: list[dict]):
+    for varaus in varaukset:
         if(varaus['Vahvistettu']):
             print(f"- {varaus['Nimi']}, {varaus['Tila']}, {varaus['Paiva'].strftime('%d.%m.%Y')} klo {varaus['Kellonaika'].strftime('%H.%M')}")
 
     print()
 
-def pitkat_varaukset(varaukset: list):
-    for varaus in varaukset[1:]:
+def pitkat_varaukset(varaukset: list[dict]):
+    for varaus in varaukset:
         if(varaus['Kesto'] >= 3):
             print(f"- {varaus['Nimi']}, {varaus['Paiva'].strftime('%d.%m.%Y')} klo {varaus['Kellonaika'].strftime('%H.%M')}, kesto {varaus['Kesto']} h, {varaus['Tila']}")
 
     print()
 
-def varausten_vahvistusstatus(varaukset: list):
-    for varaus in varaukset[1:]:
+def varausten_vahvistusstatus(varaukset: list[dict]):
+    for varaus in varaukset:
         if(varaus['Vahvistettu']):
             print(f"{varaus['Nimi']} → Vahvistettu")
         else:
@@ -51,10 +51,10 @@ def varausten_vahvistusstatus(varaukset: list):
 
     print()
 
-def varausten_lkm(varaukset: list):
+def varausten_lkm(varaukset: list[dict]):
     vahvistetutVaraukset = 0
     eiVahvistetutVaraukset = 0
-    for varaus in varaukset[1:]:
+    for varaus in varaukset:
         if(varaus['Vahvistettu']):
             vahvistetutVaraukset += 1
         else:
@@ -64,9 +64,9 @@ def varausten_lkm(varaukset: list):
     print(f"- Ei-vahvistettuja varauksia: {eiVahvistetutVaraukset} kpl")
     print()
 
-def varausten_kokonaistulot(varaukset: list):
+def varausten_kokonaistulot(varaukset: list[dict]):
     varaustenTulot = 0
-    for varaus in varaukset[1:]:
+    for varaus in varaukset:
         if(varaus['Vahvistettu']):
             varaustenTulot += varaus['Kesto']*varaus['Hinta']
 
